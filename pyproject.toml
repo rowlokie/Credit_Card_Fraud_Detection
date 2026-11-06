@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "creditfrauddetection"
+version = "2.0.0"
+description = "Production-grade credit card fraud detection with ML, SHAP, FastAPI, and MLflow"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Piyush Batavale", email = "piyushbatavale02@gmail.com"}]
+
+[tool.black]
+line-length = 120
+target-version = ["py310", "py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["src", "api"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

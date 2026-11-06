@@ -1,0 +1,133 @@
+# =============================================================================
+# Credit Card Fraud Detection — Configuration
+# =============================================================================
+# All settings can be overridden via environment variables prefixed with
+# FRAUD_ (e.g., FRAUD_RANDOM_STATE=123). See .env.example for details.
+
+# ---------------------------------------------------------------------------
+# Data Settings
+# ---------------------------------------------------------------------------
+data:
+  raw_path: "data/creditcard.csv"
+  target_col: "Class"
+  scale_cols: ["Time", "Amount"]
+  test_size: 0.2
+
+# ---------------------------------------------------------------------------
+# Training Settings
+# ---------------------------------------------------------------------------
+training:
+  random_state: 42
+  models:
+    random_forest:
+      n_estimators: 200
+      max_depth: 20
+      min_samples_split: 5
+      min_samples_leaf: 2
+      max_features: "sqrt"
+      class_weight: "balanced"
+      n_jobs: -1
+    xgboost:
+      n_estimators: 200
+      max_depth: 8
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      reg_alpha: 0.1
+      reg_lambda: 1.0
+      eval_metric: "logloss"
+      n_jobs: -1
+
+# ---------------------------------------------------------------------------
+# SMOTE Class Balancing
+# ---------------------------------------------------------------------------
+smote:
+  sampling_strategy: 0.5
+  k_neighbors: 5
+
+# ---------------------------------------------------------------------------
+# Hyperparameter Optimization (Optuna)
+# ---------------------------------------------------------------------------
+optimization:
+  engine: "optuna"          # "optuna" or "randomized_search"
+  n_trials: 50              # Number of Optuna trials
+  cv_folds: 5               # Cross-validation folds
+  scoring: "f1"             # Optimization metric
+  timeout: 600              # Max seconds per optimization run
+  optuna:
+    pruning: true
+    sampler: "TPE"          # TPE, Random, CmaEs
+    storage: null           # null = in-memory, or "sqlite:///optuna.db"
+  randomized_search:
+    n_iter: 100
+    cv: 5
+
+# ---------------------------------------------------------------------------
+# Threshold Optimization
+# ---------------------------------------------------------------------------
+threshold:
+  strategy: "f1"            # "f1", "youden", "cost", "precision_recall"
+  cost_fp: 1.0              # Cost of a false positive
+  cost_fn: 10.0             # Cost of a false negative (missed fraud)
+  search_range: [0.01, 0.99]
+  search_steps: 1000
+
+# ---------------------------------------------------------------------------
+# SHAP Explainability
+# ---------------------------------------------------------------------------
+shap:
+  enabled: true
+  background_samples: 100   # Number of background samples for TreeExplainer
+  max_display: 15            # Top features to display in summary plots
+
+# ---------------------------------------------------------------------------
+# MLflow Experiment Tracking
+# ---------------------------------------------------------------------------
+mlflow:
+  enabled: true
+  tracking_uri: "mlruns"    # Local directory or remote URI
+  experiment_name: "credit-fraud-detection"
+  log_models: true
+  log_artifacts: true
+
+# ---------------------------------------------------------------------------
+# FastAPI Settings
+# ---------------------------------------------------------------------------
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  cors_origins: ["http://localhost:8501", "http://localhost:3000"]
+  rate_limit: 100           # Requests per minute
+  default_model: "xgboost"
+
+# ---------------------------------------------------------------------------
+# Streamlit Settings
+# ---------------------------------------------------------------------------
+frontend:
+  api_url: "http://localhost:8000"
+  fallback_to_local: true   # Load model directly if API is down
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging:
+  level: "INFO"
+  file: "logs/fraud_detection.log"
+  max_size_mb: 10
+  backup_count: 5
+
+# ---------------------------------------------------------------------------
+# Visualization
+# ---------------------------------------------------------------------------
+visualization:
+  dpi: 150
+  format: "png"
+  colors:
+    legitimate: "#2ecc71"
+    fraud: "#e74c3c"
+    primary: "#3498db"
+    secondary: "#9b59b6"
+    accent: "#f39c12"
+    background: "#2c3e50"
+    text: "#ecf0f1"

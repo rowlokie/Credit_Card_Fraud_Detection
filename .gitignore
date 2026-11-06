@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data files (too large for git)
+data/*.csv
+data/*.zip
+data/*.gz
+
+# Saved models (allowed for Streamlit Cloud deployment)
+# models/*.joblib
+# models/*.pkl
+
+# Output figures (allowed for Streamlit Cloud dashboard)
+# outputs/figures/*.png
+# outputs/figures/*.pdf
+
+# Environment variables
+.env
+
+# MLflow
+mlruns/
+
+# Optuna
+*.db
+
+# Logs
+logs/
+
+# Coverage
+coverage.xml
+htmlcov/
+.coverage

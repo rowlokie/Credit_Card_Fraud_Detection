@@ -1,0 +1,54 @@
+name: Model Training
+
+on:
+  workflow_dispatch:
+    inputs:
+      optimize:
+        description: "Run hyperparameter optimization"
+        required: false
+        default: "false"
+        type: boolean
+      n_trials:
+        description: "Number of Optuna trials"
+        required: false
+        default: "20"
+        type: string
+
+jobs:
+  train:
+    name: Train Models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download dataset
+        run: |
+          echo "⚠️ Dataset must be manually placed in data/creditcard.csv"
+          echo "Download from: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud"
+          ls -la data/ || echo "No data directory found"
+
+      - name: Train models
+        if: hashFiles('data/creditcard.csv') != ''
+        run: |
+          if [ "${{ inputs.optimize }}" == "true" ]; then
+            python train.py --optimize --n-trials ${{ inputs.n_trials }} --no-eda
+          else
+            python train.py --no-eda
+          fi
+
+      - name: Upload model artifacts
+        if: hashFiles('data/creditcard.csv') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-models
+          path: |
+            models/
+            outputs/figures/
